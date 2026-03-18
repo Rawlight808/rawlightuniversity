@@ -281,15 +281,10 @@
 
 .chakra-journey__main {
   border-radius: 1.75rem;
-  background: linear-gradient(
-    145deg,
-    rgba(5, 7, 20, 0.88),
-    rgba(12, 8, 35, 0.88),
-    rgba(4, 20, 22, 0.88)
-  );
   backdrop-filter: blur(22px);
   padding: 2rem 2rem 2.25rem;
   box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+  border: 1px solid transparent;
 }
 
 .chakra-header__eyebrow {
@@ -405,6 +400,22 @@
   font-weight: 300;
   letter-spacing: 0.15em;
   opacity: 0.9;
+}
+
+/* ── Body silhouette ───────────────────────────────── */
+
+.body-silhouette {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.body-silhouette__image {
+  display: block;
+  width: min(360px, 100%);
+  height: auto;
+  opacity: 1;
+  image-rendering: auto;
 }
 
 /* ── Info panel ────────────────────────────────────── */

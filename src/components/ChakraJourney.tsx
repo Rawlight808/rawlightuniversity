@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { journeySteps, totalSteps } from '../data/chakras'
 import { useTonePlayer } from '../audio/useTonePlayer'
+import { BodySilhouette } from './BodySilhouette'
 import './ChakraJourney.css'
 
 type JourneyMode = 'auto' | 'manual' | null
@@ -54,7 +55,6 @@ export function ChakraJourney() {
     }
   }, [stopTone])
 
-  // Auto-advance timer
   useEffect(() => {
     if (mode !== 'auto' || journeyComplete) return
 
@@ -100,7 +100,6 @@ export function ChakraJourney() {
   const directionLabel = step.direction === 'ascending' ? 'Ascending' : 'Descending'
   const directionSymbol = step.direction === 'ascending' ? '↑' : '↓'
 
-  // Mode selection screen
   if (mode === null) {
     return (
       <div className="journey-select">
@@ -142,7 +141,6 @@ export function ChakraJourney() {
     )
   }
 
-  // Journey complete screen
   if (journeyComplete) {
     return (
       <div
@@ -174,12 +172,16 @@ export function ChakraJourney() {
     <div
       className="chakra-journey"
       style={{
-        background: `radial-gradient(ellipse at top, ${step.gradientTo}44, ${step.gradientFrom})`,
-        transition: 'background 1.2s ease',
+        background: `
+          radial-gradient(ellipse at 30% 20%, ${step.color}55 0%, transparent 50%),
+          radial-gradient(ellipse at 70% 80%, ${step.color}33 0%, transparent 50%),
+          radial-gradient(ellipse at 50% 50%, ${step.gradientFrom} 0%, #060608 100%)
+        `,
+        transition: 'background 1.5s ease',
       }}
     >
       <div className="chakra-journey__content">
-        {/* Sidebar with all steps */}
+        {/* Sidebar */}
         <aside className="chakra-journey__sidebar" aria-label="Journey progress">
           <div className="sidebar-header">
             <button type="button" className="sidebar-exit" onClick={exitJourney}>
@@ -229,7 +231,21 @@ export function ChakraJourney() {
         </aside>
 
         {/* Main content */}
-        <main className="chakra-journey__main">
+        <main
+          className="chakra-journey__main"
+          style={{
+            background: `
+              linear-gradient(
+                145deg,
+                ${step.gradientFrom}ee,
+                ${step.color}18,
+                ${step.gradientFrom}dd
+              )
+            `,
+            borderColor: `${step.color}22`,
+            transition: 'background 1.2s ease, border-color 1.2s ease',
+          }}
+        >
           <header className="chakra-header">
             <p className="chakra-header__eyebrow">
               Step {currentIndex + 1} of {totalSteps} &middot; {directionSymbol} {directionLabel} &middot; {step.sanskritName}
@@ -238,7 +254,6 @@ export function ChakraJourney() {
             <p className="chakra-header__location">{step.location}</p>
           </header>
 
-          {/* Timer bar (auto mode) */}
           {mode === 'auto' && (
             <div className="chakra-timer">
               <div className="chakra-timer__bar">
@@ -258,31 +273,32 @@ export function ChakraJourney() {
           )}
 
           <section className="chakra-layout">
-            {/* Visual orb */}
+            {/* Left column: orb + body */}
             <div className="chakra-visual">
-              <div className="chakra-visual__glow">
+              <div className="chakra-visual__glow" style={{ boxShadow: `0 0 40px ${step.color}40, 0 0 80px ${step.color}20` }}>
                 <div
                   className="chakra-visual__core"
                   style={{
                     backgroundColor: step.color,
-                    transition: 'background-color 1s ease',
+                    boxShadow: `0 0 30px ${step.color}cc, 0 0 70px ${step.color}66`,
+                    transition: 'background-color 1s ease, box-shadow 1s ease',
                   }}
                 />
               </div>
 
-              {/* Vowel sound */}
               <div className="chakra-vowel">
                 <span className="chakra-vowel__label">Sing</span>
                 <span className="chakra-vowel__sound">{step.vowelSound}</span>
               </div>
+
+              <BodySilhouette activeChakraId={step.chakraId} activeColor={step.color} />
             </div>
 
-            {/* Info panel */}
+            {/* Right column: info */}
             <div className="chakra-info">
-              {/* Note + Frequency */}
               <div className="chakra-note">
                 <span className="chakra-note__label">Note</span>
-                <span className="chakra-note__value">{step.note}</span>
+                <span className="chakra-note__value" style={{ color: step.colorLight }}>{step.note}</span>
                 <span className="chakra-note__frequency">
                   {Math.round(step.frequencyHz)} Hz
                 </span>
@@ -290,7 +306,6 @@ export function ChakraJourney() {
 
               <p className="chakra-description">{step.description}</p>
 
-              {/* Affirmation */}
               <div className="chakra-affirmation">
                 <span className="chakra-affirmation__label">Affirmation</span>
                 <span className="chakra-affirmation__text">
@@ -298,48 +313,50 @@ export function ChakraJourney() {
                 </span>
               </div>
 
-              {/* Essential Oils */}
               <div className="chakra-oils">
                 <span className="chakra-oils__label">Essential Oils</span>
                 <div className="chakra-oils__list">
                   {step.essentialOils.map((oil) => (
-                    <span key={oil} className="chakra-oil-pill">{oil}</span>
+                    <span
+                      key={oil}
+                      className="chakra-oil-pill"
+                      style={{ borderColor: `${step.color}33`, background: `${step.color}12` }}
+                    >
+                      {oil}
+                    </span>
                   ))}
                 </div>
               </div>
 
-              {/* Themes */}
               <div className="chakra-themes" aria-label="Chakra themes">
                 {step.themes.map((theme) => (
-                  <span key={theme} className="chakra-theme-pill">
+                  <span
+                    key={theme}
+                    className="chakra-theme-pill"
+                    style={{ borderColor: `${step.color}22`, background: `${step.color}0a` }}
+                  >
                     {theme}
                   </span>
                 ))}
               </div>
 
-              {/* Controls */}
               <div className="chakra-controls">
-                {mode === 'manual' && (
-                  <button
-                    type="button"
-                    className="btn btn--primary"
-                    onClick={handlePlayPause}
-                    aria-pressed={isPlaying}
-                  >
-                    {isPlaying ? 'Pause Tone' : 'Play Tone'}
-                  </button>
-                )}
-
-                {mode === 'auto' && (
-                  <button
-                    type="button"
-                    className="btn btn--primary"
-                    onClick={handlePlayPause}
-                    aria-pressed={isPlaying}
-                  >
-                    {isPlaying ? 'Mute' : 'Unmute'}
-                  </button>
-                )}
+                <button
+                  type="button"
+                  className="btn btn--primary"
+                  onClick={handlePlayPause}
+                  aria-pressed={isPlaying}
+                  style={{
+                    background: step.color,
+                    color: '#fff',
+                    boxShadow: `0 12px 30px ${step.color}55`,
+                  }}
+                >
+                  {mode === 'auto'
+                    ? (isPlaying ? 'Mute' : 'Unmute')
+                    : (isPlaying ? 'Pause Tone' : 'Play Tone')
+                  }
+                </button>
 
                 <div className="chakra-controls__nav">
                   <button

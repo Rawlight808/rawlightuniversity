@@ -71,7 +71,7 @@ export function LandingPage() {
 
         <h1 className="landing__title">Chakra Journey</h1>
         <p className="landing__subtitle">
-          Align your energy centers through sound, breath, and intention
+          Align your energy centers through sound, color, singing and more
         </p>
 
         <div className="landing__actions">
