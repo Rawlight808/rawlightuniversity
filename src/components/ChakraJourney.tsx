@@ -14,6 +14,7 @@ export function ChakraJourney() {
   const [elapsed, setElapsed] = useState(0)
   const [journeyComplete, setJourneyComplete] = useState(false)
   const timerRef = useRef<number | null>(null)
+  const elapsedRef = useRef(0)
 
   const { playTone, stopTone, crossfadeTo, isPlaying } = useTonePlayer()
 
@@ -58,20 +59,21 @@ export function ChakraJourney() {
   useEffect(() => {
     if (mode !== 'auto' || journeyComplete) return
 
+    elapsedRef.current = 0
+
     timerRef.current = window.setInterval(() => {
-      setElapsed((prev) => {
-        const next = prev + 1
-        if (next >= step.durationSeconds) {
-          if (currentIndex < totalSteps - 1) {
-            goToStep(currentIndex + 1)
-          } else {
-            stopTone()
-            setJourneyComplete(true)
-          }
-          return 0
+      elapsedRef.current += 1
+      setElapsed(elapsedRef.current)
+
+      if (elapsedRef.current >= step.durationSeconds) {
+        elapsedRef.current = 0
+        if (currentIndex < totalSteps - 1) {
+          goToStep(currentIndex + 1)
+        } else {
+          stopTone()
+          setJourneyComplete(true)
         }
-        return next
-      })
+      }
     }, 1000)
 
     return () => {

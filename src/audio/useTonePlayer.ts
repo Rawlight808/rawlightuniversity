@@ -1,5 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 
+interface WindowWithWebkitAudio extends Window {
+  webkitAudioContext: typeof AudioContext
+}
+
 type TonePlayer = {
   playTone: (frequencyHz: number) => Promise<void>
   stopTone: () => void
@@ -21,7 +25,8 @@ export function useTonePlayer(): TonePlayer {
 
   const getContext = async () => {
     if (!audioContextRef.current) {
-      audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)()
+      const AudioContextClass = window.AudioContext || (window as WindowWithWebkitAudio).webkitAudioContext
+      audioContextRef.current = new AudioContextClass()
     }
 
     if (audioContextRef.current.state !== 'running') {
